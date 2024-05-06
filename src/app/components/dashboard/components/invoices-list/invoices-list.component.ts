@@ -7,13 +7,14 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { UpdateInvoiceComponent } from '../update-invoice/update-invoice.component';
 
 
 
 @Component({
   selector: 'app-invoices-list',
   standalone: true,
-  imports: [CommonModule, TableModule, ConfirmDialogModule, ToastModule, ButtonModule],
+  imports: [CommonModule, TableModule, ConfirmDialogModule, ToastModule, ButtonModule, UpdateInvoiceComponent],
   templateUrl: './invoices-list.component.html',
   styleUrl: './invoices-list.component.scss',
   providers: [ConfirmationService, MessageService]
@@ -53,7 +54,7 @@ export class InvoicesListComponent implements OnInit {
 
     this.confirmationService.confirm({
       target: event.target as EventTarget,
-      message: `Do you want to delete invoice # ${id} ?`,
+      message: `Do you want to delete invoice id # ${id} ?`,
       header: 'Delete Confirmation',
       icon: 'pi pi-info-circle',
       acceptButtonStyleClass: "p-button-danger p-button-text",
@@ -75,6 +76,11 @@ export class InvoicesListComponent implements OnInit {
         // Do nothing
       }
     });
+  }
+
+  // show success toast for update
+  showUpdatedToast(id: number) {
+    this.messageService.add({ severity: 'success', summary: 'Updated Successfuly', detail: `Invoice # ${id} is updated successfuly`, key: 'updated' });
   }
 
 

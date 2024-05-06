@@ -1,4 +1,4 @@
-<form [formGroup]="invoiceForm" (ngSubmit)="addInvoice()">
+<form [formGroup]="invoiceForm" (ngSubmit)="isEditMode ? updateInvoice() : addInvoice()">
     <div formArrayName="items">
         <!-- Iterate over each item and create input fields -->
         <div *ngFor="let item of items.controls; let i=index" [formGroupName]="i" class="mb-3 border p-3">
@@ -31,5 +31,6 @@
         <label for="paymentType">Payment Type: <span class="text-danger">*</span></label>
         <input type="text" id="paymentType" formControlName="paymentType" class="form-control">
     </div>
-    <button type="submit" class="btn btn-primary mt-3" [disabled]="invoiceForm.invalid">Add Invoice</button>
+    <button type="submit" class="btn btn-primary mt-3" [disabled]="invoiceForm.invalid">{{isEditMode ? 'Update invoice'
+        : 'Add invoice'}}</button>
 </form>

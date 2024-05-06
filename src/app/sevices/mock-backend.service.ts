@@ -51,8 +51,13 @@ export class MockBackendService {
   }
 
   // UPDATE INVOICE
-  updateInvoice(invoiceId: number, value: Object) {
-
+  updateInvoice(invoiceId: number, updatedValue: Invoice) {
+    const index = this.invoicesList.findIndex(invoice => invoice.id === invoiceId);
+    if (index !== -1) {
+      this.invoicesList[index] = updatedValue;
+    }
+    this.backendOperationDone$.next(true);
+    return of(null); // simulate success status 200
   }
 
   // DELETE INVOICE

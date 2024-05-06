@@ -1,7 +1,7 @@
 export interface Invoice {
     id?: number;
     items: {
-        name: string;
+        itemName: string;
         quantity: string;
         price: number;
     }[];

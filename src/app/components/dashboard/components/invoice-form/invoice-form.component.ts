@@ -1,10 +1,11 @@
-import { AfterContentInit, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MockBackendService } from '../../../../sevices/mock-backend.service';
 import { CommonModule } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
-import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { Invoice } from '../../../../models/invoice.model';
 
 @Component({
   selector: 'app-invoice-form',
@@ -13,22 +14,31 @@ import { DynamicDialogRef } from 'primeng/dynamicdialog';
   templateUrl: './invoice-form.component.html',
   styleUrl: './invoice-form.component.scss'
 })
-export class InvoiceFormComponent implements OnInit, AfterContentInit {
+export class InvoiceFormComponent implements OnInit {
 
   invoiceForm: FormGroup;
+  isEditMode: boolean;
+  invoiceDetails: Invoice;
 
-  constructor(private fb: FormBuilder, private backend: MockBackendService, public modalRef: DynamicDialogRef) {
+  constructor(private fb: FormBuilder, private backend: MockBackendService, public modalRef: DynamicDialogRef, public modalConfig: DynamicDialogConfig) {
 
   }
 
   ngOnInit(): void {
+    // build the form
     this.buildForm();
+    // create new invoice item once component initiated
+    this.addNewItem();
+
+    if (this.modalConfig?.data) {
+      this.isEditMode = true;
+      this.invoiceDetails = this.modalConfig.data;
+      console.log("DATA ", this.modalConfig.data);
+      this.patchFormValues();
+    }
+
   }
 
-  ngAfterContentInit(): void {
-    // create new invoice item once component content initiated
-    this.addNewItem();
-  }
 
   buildForm() {
     this.invoiceForm = this.fb.group({
@@ -54,18 +64,38 @@ export class InvoiceFormComponent implements OnInit, AfterContentInit {
     });
   }
 
+  // if edit mode patch form values to be able to edit it
+  patchFormValues() {
+    this.invoiceForm.patchValue({
+      paymentStatus: this.invoiceDetails?.paymentStatus,
+      paymentType: this.invoiceDetails?.paymentType
+    });
+
+    // remove the defualt invoice item
+    this.removeItem(0);
+
+    // Patch formArray items 
+    this.invoiceDetails?.items.forEach(item => {
+      this.items.push(
+        this.fb.group({
+          itemName: item?.itemName,
+          quantity: item?.quantity,
+          price: item?.price
+        })
+      );
+    });
+  }
+
   removeItem(index: number) {
     this.items.removeAt(index);
   }
 
-  // submit new invoic
+  // submit new invoice
   addInvoice() {
     // do not proceed if form is invalid
     if (this.invoiceForm.invalid) return;
 
     const reqBody = { ...this.invoiceForm.value };
-    // TODO: to be removed
-    console.log("Req Body ", reqBody);
 
     this.backend.addInvoice(reqBody).subscribe(res => {
       // close popup on success
@@ -74,6 +104,24 @@ export class InvoiceFormComponent implements OnInit, AfterContentInit {
     }, err => {
       console.error(err);
     });
+  }
+
+  // Edit invoice
+  updateInvoice() {
+
+    // do not proceed if form is invalid
+    if (this.invoiceForm.invalid) return;
+
+    const reqBody = { id: this.invoiceDetails.id, ...this.invoiceForm.value };
+
+    this.backend.updateInvoice(Number(this.invoiceDetails?.id), reqBody).subscribe(res => {
+      // close popup on success
+      this.modalRef.close("success");
+
+    }, err => {
+      console.error(err);
+    });
+
   }
 
 

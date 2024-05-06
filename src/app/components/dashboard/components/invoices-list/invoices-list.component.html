@@ -1,8 +1,12 @@
 <p-toast />
 <p-confirmDialog />
+<!-- updated successfuly toast -->
+<p-toast key="updated" />
 
-<p-table [value]="invoices" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="5"
-    [rowsPerPageOptions]="[5, 10, 20]">
+
+
+<p-table [value]="invoices" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="3"
+    [rowsPerPageOptions]="[3, 5, 7]">
     <ng-template pTemplate="header">
         <tr>
             <th>ID</th>
@@ -21,9 +25,11 @@
             <td>{{ invoice?.paymentStatus }}</td>
             <td>{{ invoice?.paymentType}}</td>
             <td>
-                <button class="mx-1"><i class="pi pi-pencil" style="font-size: 1rem"></i></button>
-                <button class="mx-1"><i class="pi pi-trash" style="font-size: 1rem"
-                        (click)="deleteInvoice(invoice?.id, $event)"></i></button>
+                <!-- Edit -->
+                <app-update-invoice [invoiceDetails]="invoice" (updatedSuccessfuly)="showUpdatedToast(invoice?.id)" />
+                <!-- Delete -->
+                <button class="mx-1" (click)="deleteInvoice(invoice?.id, $event)"><i class="pi pi-trash"
+                        style="font-size: 1rem"></i></button>
             </td>
         </tr>
     </ng-template>
