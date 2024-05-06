@@ -1,4 +1,5 @@
-<p-table [value]="invoices" [tableStyle]="{ 'min-width': '50rem' }">
+<p-table [value]="invoices" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="5"
+    [rowsPerPageOptions]="[5, 10, 20]">
     <ng-template pTemplate="header">
         <tr>
             <th>ID</th>
