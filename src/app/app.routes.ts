@@ -10,4 +10,8 @@ export const routes: Routes = [
         path: 'dashboard', loadChildren: () => import('./components/dashboard/dashboard.module').then(m => m.DashboardModule),
         canActivate: [AuthGuard]
     },
+    {
+        path: '**',
+        redirectTo: '/dashboard'
+    }
 ];
