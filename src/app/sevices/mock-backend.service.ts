@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, delay, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, delay, of, throwError } from 'rxjs';
 import { Invoice } from '../models/invoice.model';
 
 @Injectable({
@@ -12,9 +12,11 @@ export class MockBackendService {
     { id: 2, username: 'user', password: '123' }
   ];
 
-  private invoicesList: Object[] = [];
+  private invoicesList: Invoice[] = [];
 
   private invoiceId = 0;
+
+  backendOperationDone$ = new BehaviorSubject(false);
 
   constructor() { }
 
@@ -32,14 +34,15 @@ export class MockBackendService {
 
   // ADD INVOICE
   addInvoice(invoiceData: Invoice): Observable<null> {
-    this.invoiceId += this.invoiceId;
+    this.invoiceId = this.invoiceId + 1;
     this.invoicesList.push({ id: this.invoiceId, ...invoiceData });
+    this.backendOperationDone$.next(true);
     return of(null); // simulate success status 200
   }
 
   // LIST INVOICE
-  getInvoices() {
-
+  getInvoices(): Observable<Invoice[]> {
+    return of(this.invoicesList);
   }
 
   // GET INVOICE BY ID
