@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { MockBackendService } from '../../../../sevices/mock-backend.service';
 import { Invoice } from '../../../../models/invoice.model';
@@ -9,6 +9,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UpdateInvoiceComponent } from '../update-invoice/update-invoice.component';
 import { AuthService } from '../../../../sevices/auth-service.service';
+import { Subject, takeUntil } from 'rxjs';
 
 
 
@@ -20,9 +21,10 @@ import { AuthService } from '../../../../sevices/auth-service.service';
   styleUrl: './invoices-list.component.scss',
   providers: [ConfirmationService, MessageService]
 })
-export class InvoicesListComponent implements OnInit {
+export class InvoicesListComponent implements OnInit, OnDestroy {
 
   invoices: Invoice[] = [];
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private backend: MockBackendService, private confirmationService: ConfirmationService,
     private messageService: MessageService, public authService: AuthService) {
@@ -36,9 +38,11 @@ export class InvoicesListComponent implements OnInit {
   }
 
   getAllInvoices() {
-    this.backend.getInvoices().subscribe((res) => {
-      this.invoices = [...res];
-    }, err => console.error(err));
+    this.backend.getInvoices()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.invoices = [...res];
+      }, err => console.error(err));
   }
 
   // sum all item prices
@@ -85,6 +89,9 @@ export class InvoicesListComponent implements OnInit {
     this.messageService.add({ severity: 'success', summary: 'Updated Successfuly', detail: `Invoice # ${id} is updated successfuly`, key: 'updated' });
   }
 
-
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 
 }

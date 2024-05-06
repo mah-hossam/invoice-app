@@ -37,6 +37,7 @@ export class AuthService {
   logOut() {
     // clear user session from L S
     localStorage.removeItem("username");
+    return of(true);
   }
 
   isAuthenticated(): boolean {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MockBackendService } from '../../../../sevices/mock-backend.service';
 import { CommonModule } from '@angular/common';
@@ -6,6 +6,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Invoice } from '../../../../models/invoice.model';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-invoice-form',
@@ -14,13 +15,15 @@ import { Invoice } from '../../../../models/invoice.model';
   templateUrl: './invoice-form.component.html',
   styleUrl: './invoice-form.component.scss'
 })
-export class InvoiceFormComponent implements OnInit {
+export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   invoiceForm: FormGroup;
   isEditMode: boolean;
   invoiceDetails: Invoice;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private fb: FormBuilder, private backend: MockBackendService, public modalRef: DynamicDialogRef, public modalConfig: DynamicDialogConfig) {
+  constructor(private fb: FormBuilder, private backend: MockBackendService,
+    public modalRef: DynamicDialogRef, public modalConfig: DynamicDialogConfig) {
 
   }
 
@@ -33,7 +36,6 @@ export class InvoiceFormComponent implements OnInit {
     if (this.modalConfig?.data) {
       this.isEditMode = true;
       this.invoiceDetails = this.modalConfig.data;
-      console.log("DATA ", this.modalConfig.data);
       this.patchFormValues();
     }
 
@@ -97,13 +99,15 @@ export class InvoiceFormComponent implements OnInit {
 
     const reqBody = { ...this.invoiceForm.value };
 
-    this.backend.addInvoice(reqBody).subscribe(res => {
-      // close popup on success
-      this.modalRef.close("success");
+    this.backend.addInvoice(reqBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+        // close popup on success
+        this.modalRef.close("success");
 
-    }, err => {
-      console.error(err);
-    });
+      }, err => {
+        console.error(err);
+      });
   }
 
   // Edit invoice
@@ -114,16 +118,21 @@ export class InvoiceFormComponent implements OnInit {
 
     const reqBody = { id: this.invoiceDetails.id, ...this.invoiceForm.value };
 
-    this.backend.updateInvoice(Number(this.invoiceDetails?.id), reqBody).subscribe(res => {
-      // close popup on success
-      this.modalRef.close("success");
+    this.backend.updateInvoice(Number(this.invoiceDetails?.id), reqBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
+        // close popup on success
+        this.modalRef.close("success");
 
-    }, err => {
-      console.error(err);
-    });
+      }, err => {
+        console.error(err);
+      });
 
   }
 
-
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
 
 }

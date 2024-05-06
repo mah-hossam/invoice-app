@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { MockBackendService } from '../../sevices/mock-backend.service';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../sevices/auth-service.service';
+import { Subject, takeUntil } from 'rxjs';
 
 
 
@@ -19,11 +20,12 @@ import { AuthService } from '../../sevices/auth-service.service';
   styleUrl: './login.component.scss',
   providers: [MessageService]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
   username: string;
   password: string;
   isloading = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
 
 
@@ -36,16 +38,18 @@ export class LoginComponent implements OnInit {
 
   login() {
     this.isloading = true;
-    this.auth.login(this.username, this.password).subscribe(res => {
-      this.isloading = false;
-      // if valid -> navigate to dashboard
-      this.router.navigate(['/dashboard']);
-    },
-      err => {
+    this.auth.login(this.username, this.password)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(res => {
         this.isloading = false;
-        this.showErrorToast(err);
-      }
-    );
+        // if valid -> navigate to dashboard
+        this.router.navigate(['/dashboard']);
+      },
+        err => {
+          this.isloading = false;
+          this.showErrorToast(err);
+        }
+      );
   }
 
   showErrorToast(msg: string) {
@@ -53,6 +57,11 @@ export class LoginComponent implements OnInit {
     // reset form if invalid
     this.username = '';
     this.password = '';
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 
 }
