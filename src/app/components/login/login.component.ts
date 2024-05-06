@@ -7,6 +7,7 @@ import { MessageService } from 'primeng/api';
 import { Router } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../sevices/auth-service.service';
 
 
 
@@ -26,7 +27,7 @@ export class LoginComponent implements OnInit {
 
 
 
-  constructor(private backend: MockBackendService, private messageService: MessageService, private router: Router) { }
+  constructor(private backend: MockBackendService, private messageService: MessageService, private router: Router, private auth: AuthService) { }
 
 
   ngOnInit(): void {
@@ -35,7 +36,7 @@ export class LoginComponent implements OnInit {
 
   login() {
     this.isloading = true;
-    this.backend.login(this.username, this.password).subscribe(res => {
+    this.auth.login(this.username, this.password).subscribe(res => {
       this.isloading = false;
       // if valid -> navigate to dashboard
       this.router.navigate(['/dashboard']);

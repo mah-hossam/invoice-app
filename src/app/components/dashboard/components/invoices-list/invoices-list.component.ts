@@ -8,6 +8,7 @@ import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UpdateInvoiceComponent } from '../update-invoice/update-invoice.component';
+import { AuthService } from '../../../../sevices/auth-service.service';
 
 
 
@@ -23,7 +24,8 @@ export class InvoicesListComponent implements OnInit {
 
   invoices: Invoice[] = [];
 
-  constructor(private backend: MockBackendService, private confirmationService: ConfirmationService, private messageService: MessageService) {
+  constructor(private backend: MockBackendService, private confirmationService: ConfirmationService,
+    private messageService: MessageService, public authService: AuthService) {
 
   }
 

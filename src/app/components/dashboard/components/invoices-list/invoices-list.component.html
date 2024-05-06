@@ -25,11 +25,15 @@
             <td>{{ invoice?.paymentStatus }}</td>
             <td>{{ invoice?.paymentType}}</td>
             <td>
-                <!-- Edit -->
-                <app-update-invoice [invoiceDetails]="invoice" (updatedSuccessfuly)="showUpdatedToast(invoice?.id)" />
-                <!-- Delete -->
-                <button class="mx-1" (click)="deleteInvoice(invoice?.id, $event)"><i class="pi pi-trash"
-                        style="font-size: 1rem"></i></button>
+                <ng-container *ngIf="authService.isAdmin()">
+                    <!-- Edit -->
+                    <app-update-invoice [invoiceDetails]="invoice"
+                        (updatedSuccessfuly)="showUpdatedToast(invoice?.id)" />
+                    <!-- Delete -->
+                    <button class="mx-1" (click)="deleteInvoice(invoice?.id, $event)"><i class="pi pi-trash"
+                            style="font-size: 1rem"></i></button>
+                </ng-container>
+
             </td>
         </tr>
     </ng-template>

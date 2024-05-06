@@ -10,7 +10,7 @@
                 <!-- Add your navigation links here -->
             </ul>
             <div class="navbar-text">
-                <span class="mr-2 mx-3">Welcome, Admin</span>
+                <span class="mr-2 mx-3">Welcome, <span class="bold">{{authService.getUsername()}}</span></span>
                 <button class="btn btn-outline-danger" (click)="logout()">Logout</button>
             </div>
         </div>
