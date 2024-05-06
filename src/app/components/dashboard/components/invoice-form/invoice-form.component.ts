@@ -19,6 +19,7 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
 
   invoiceForm: FormGroup;
   isEditMode: boolean;
+  isViewMode: boolean;
   invoiceDetails: Invoice;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -34,7 +35,10 @@ export class InvoiceFormComponent implements OnInit, OnDestroy {
     this.addNewItem();
 
     if (this.modalConfig?.data) {
-      this.isEditMode = true;
+
+      if (this.modalConfig.data.isView) this.isViewMode = true;
+      else this.isEditMode = true;
+
       this.invoiceDetails = this.modalConfig.data;
       this.patchFormValues();
     }

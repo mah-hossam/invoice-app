@@ -10,13 +10,14 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { UpdateInvoiceComponent } from '../update-invoice/update-invoice.component';
 import { AuthService } from '../../../../sevices/auth-service.service';
 import { Subject, takeUntil } from 'rxjs';
+import { ViewInvoiceComponent } from '../view-invoice/view-invoice.component';
 
 
 
 @Component({
   selector: 'app-invoices-list',
   standalone: true,
-  imports: [CommonModule, TableModule, ConfirmDialogModule, ToastModule, ButtonModule, UpdateInvoiceComponent],
+  imports: [CommonModule, TableModule, ConfirmDialogModule, ToastModule, ButtonModule, UpdateInvoiceComponent, ViewInvoiceComponent],
   templateUrl: './invoices-list.component.html',
   styleUrl: './invoices-list.component.scss',
   providers: [ConfirmationService, MessageService]

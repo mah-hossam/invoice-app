@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { MessagesModule } from 'primeng/messages';
+
 
 @Component({
   selector: 'app-root',

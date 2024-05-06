@@ -38,7 +38,7 @@ export class UpdateInvoiceComponent implements OnInit {
         '960px': '75vw',
         '640px': '90vw'
       },
-      data: this.invoiceDetails
+      data: { ...this.invoiceDetails, isView: false }
     });
 
     this.dialogRef.onClose.subscribe(nxt => {

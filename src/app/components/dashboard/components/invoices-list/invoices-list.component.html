@@ -33,6 +33,8 @@
                     <button class="mx-1" (click)="deleteInvoice(invoice?.id, $event)"><i class="pi pi-trash"
                             style="font-size: 1rem"></i></button>
                 </ng-container>
+                <!-- View Invoice Details -->
+                <app-view-invoice [invoiceDetails]="invoice" />
 
             </td>
         </tr>
