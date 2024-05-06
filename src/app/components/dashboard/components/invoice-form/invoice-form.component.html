@@ -1,0 +1,35 @@
+<form [formGroup]="invoiceForm" (ngSubmit)="addInvoice()">
+    <div formArrayName="items">
+        <!-- Iterate over each item and create input fields -->
+        <div *ngFor="let item of items.controls; let i=index" [formGroupName]="i" class="mb-3 border p-3">
+            <div class="d-flex justify justify-content-between align-items-center">
+                <h5 class="mb-0">Item # {{ i + 1 }}</h5>
+                <button *ngIf="i!==0" type="button" class="btn btn-danger" (click)="removeItem(i)">
+                    <i class="pi pi-trash" style="font-size: 1rem"></i>
+                </button>
+            </div>
+            <div class="form-group mb-1">
+                <label for="itemName{{i}}">Item Name: <span class="text-danger">*</span></label>
+                <input type="text" id="itemName{{i}}" formControlName="itemName" class="form-control">
+            </div>
+            <div class="form-group mb-1">
+                <label for="quantity{{i}}">Quantity: <span class="text-danger">*</span></label>
+                <input type="number" id="quantity{{i}}" formControlName="quantity" class="form-control">
+            </div>
+            <div class="form-group mb-1">
+                <label for="price{{i}}">Price: <span class="text-danger">*</span></label>
+                <input type="number" id="price{{i}}" formControlName="price" class="form-control">
+            </div>
+        </div>
+    </div>
+    <button type="button" class="btn btn-success" (click)="addNewItem()">Add more Items</button>
+    <div class="form-group mt-3 mb-1">
+        <label for="paymentStatus">Payment Status: <span class="text-danger">*</span></label>
+        <input type="text" id="paymentStatus" formControlName="paymentStatus" class="form-control">
+    </div>
+    <div class="form-group mb-1">
+        <label for="paymentType">Payment Type: <span class="text-danger">*</span></label>
+        <input type="text" id="paymentType" formControlName="paymentType" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary mt-3" [disabled]="invoiceForm.invalid">Add Invoice</button>
+</form>
