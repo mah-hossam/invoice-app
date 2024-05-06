@@ -56,6 +56,15 @@ export class MockBackendService {
   }
 
   // DELETE INVOICE
-  deleteInvoice(invoiceId: number) { }
+  deleteInvoice(invoiceId: number) {
+
+    const index = this.invoicesList.findIndex(invoice => invoice.id === invoiceId);
+    if (index !== -1) {
+      this.invoicesList.splice(index, 1);
+    }
+    this.backendOperationDone$.next(true);
+    return of(null); // simulate success status 200
+
+  }
 
 }

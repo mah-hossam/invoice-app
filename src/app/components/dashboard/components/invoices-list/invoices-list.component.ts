@@ -3,20 +3,26 @@ import { Component, OnInit } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { MockBackendService } from '../../../../sevices/mock-backend.service';
 import { Invoice } from '../../../../models/invoice.model';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+
 
 
 @Component({
   selector: 'app-invoices-list',
   standalone: true,
-  imports: [CommonModule, TableModule],
+  imports: [CommonModule, TableModule, ConfirmDialogModule, ToastModule, ButtonModule],
   templateUrl: './invoices-list.component.html',
-  styleUrl: './invoices-list.component.scss'
+  styleUrl: './invoices-list.component.scss',
+  providers: [ConfirmationService, MessageService]
 })
 export class InvoicesListComponent implements OnInit {
 
   invoices: Invoice[] = [];
 
-  constructor(private backend: MockBackendService) {
+  constructor(private backend: MockBackendService, private confirmationService: ConfirmationService, private messageService: MessageService) {
 
   }
 
@@ -40,6 +46,37 @@ export class InvoicesListComponent implements OnInit {
     });
     return totalAmout;
   }
+
+
+  // delete invoice
+  deleteInvoice(id: number, event: Event) {
+
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: `Do you want to delete invoice # ${id} ?`,
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      acceptButtonStyleClass: "p-button-danger p-button-text",
+      rejectButtonStyleClass: "p-button-text p-button-text",
+      acceptIcon: "none",
+      rejectIcon: "none",
+
+      accept: () => {
+        this.backend.deleteInvoice(id).subscribe((res) => {
+          // update list after deletetion
+          this.backend.backendOperationDone$.subscribe(nxt => {
+            this.getAllInvoices();
+          });
+          // show success toast
+          this.messageService.add({ severity: 'success', summary: 'Deleted', detail: `Invoice #${id} has been deleted` });
+        }, err => console.error(err));
+      },
+      reject: () => {
+        // Do nothing
+      }
+    });
+  }
+
 
 
 }

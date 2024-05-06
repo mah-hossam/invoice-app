@@ -1,3 +1,6 @@
+<p-toast />
+<p-confirmDialog />
+
 <p-table [value]="invoices" [tableStyle]="{ 'min-width': '50rem' }" [paginator]="true" [rows]="5"
     [rowsPerPageOptions]="[5, 10, 20]">
     <ng-template pTemplate="header">
@@ -19,7 +22,8 @@
             <td>{{ invoice?.paymentType}}</td>
             <td>
                 <button class="mx-1"><i class="pi pi-pencil" style="font-size: 1rem"></i></button>
-                <button class="mx-1"><i class="pi pi-trash" style="font-size: 1rem"></i></button>
+                <button class="mx-1"><i class="pi pi-trash" style="font-size: 1rem"
+                        (click)="deleteInvoice(invoice?.id, $event)"></i></button>
             </td>
         </tr>
     </ng-template>
