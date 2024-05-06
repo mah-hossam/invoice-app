@@ -11,6 +11,7 @@ export class MockBackendService {
 
   private invoiceId = 0;
 
+  // to trigger updates
   backendOperationDone$ = new BehaviorSubject(false);
 
   constructor() { }
@@ -26,11 +27,6 @@ export class MockBackendService {
   // LIST INVOICE
   getInvoices(): Observable<Invoice[]> {
     return of(this.invoicesList);
-  }
-
-  // GET INVOICE BY ID
-  getInvoiceById(invoiceId: number) {
-
   }
 
   // UPDATE INVOICE
